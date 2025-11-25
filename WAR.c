@@ -9,20 +9,25 @@ int main() {
     int i;
 
     for (i = 0; i< 5; i++){
-        printf("Digite o nome do territorio: ");
-        scanf("%s", t[1].nome);
+        printf("Digite o nome do Território: ");
+        scanf("%s", t[i].nome);
 
-        printf("Digite a cor do exercito: ");
+        printf("Digite a cor do Exercito: ");
         scanf("%s", t[i].cor);
 
-        printf("Digite o número de tropas: ");
+        printf("Digite o número de Tropas: ");
         scanf("%d", &t[i].tropas);
 
         printf("\n");
     }
 
+    //Criando a exibição dos dados solicitados
+    printf("\n=-=-=-= Territorios Cadastrados =-=-=-=\n\n");
 
-    
-     
-    
+    for (i= 0; i < 5; i++) {
+        printf("Nome: %s\n", t[i].nome);
+        printf("Cor: %s\n", t[i].cor);
+        printf("Tropas: %d\n\n", t[i].tropas);
+    }
+    return 0;  
 }
