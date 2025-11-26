@@ -5,132 +5,171 @@
 
 struct Territorio {
     char nome[30];
-        char cor[10];
-            int tropas;
-            };
+    char cor[10];
+    int tropas;
+};
 
-            void cadastrar(struct Territorio *t);
-            void exibirMapa(struct Territorio *t);
-            void atacar(struct Territorio *atacante, struct Territorio *defensor);
+void cadastrar(struct Territorio *t);
+void exibirMapa(struct Territorio *t);
+void atacar(struct Territorio *atacante, struct Territorio *defensor);
+void pausar();
+int contarTerritorios(struct Territorio *t, const char *cor);
 
-            int main() {
-                srand(time(NULL));
+int main() {
+    srand(time(NULL));
 
-                    int tamanho = 5; 
-                        struct Territorio *t = malloc(tamanho * sizeof(struct Territorio));
+    int tamanho = 5; 
+    struct Territorio *t = malloc(tamanho * sizeof(struct Territorio));
 
-                            if (t == NULL) {
-                                    printf("Erro ao alocar memoria.\n");
-                                            return 1;
-                                                }
+    if (t == NULL) {
+        printf("Erro ao alocar memoria.\n");
+        return 1;
+    }
 
-                                                    cadastrar(t);
+    cadastrar(t);
 
-                                                        while (1) {
-                                                                int a, d;
-                                                                        printf("\n================================");
-                                                                                printf("\n   MAPA MUNDI - ESTADO ATUAL\n");
-                                                                                        printf("================================\n\n");
-                                                                                                exibirMapa(t);
+    while (1) {
+        int a, d;
 
-                                                                                                        printf("\n--- FASE DE ATAQUE ---");
+        printf("\n================================");
+        printf("\n   MAPA MUNDI - ESTADO ATUAL\n");
+        printf("================================\n\n");
+        exibirMapa(t);
 
-                                                                                                                printf("\nEscolha o número do território ATACANTE (ou 0 para sair): ");
-                                                                                                                        scanf("%d", &a);
-                                                                                                                                if (a == 0) break;
+        printf("\n--- FASE DE ATAQUE ---");
 
-                                                                                                                                        printf("Escolha o número do território DEFENSOR (1 a 5): ");
-                                                                                                                                                scanf("%d", &d);
+        printf("\nEscolha o número do território ATACANTE (ou 0 para sair): ");
+        scanf("%d", &a);
+        if (a == 0) break;
 
-                                                                                                                                                        // Ajustando para índice correto (1 a 5 → 0 a 4)
-                                                                                                                                                                a -= 1;
-                                                                                                                                                                        d -= 1;
+        printf("Escolha o número do território DEFENSOR (1 a 5): ");
+        scanf("%d", &d);
 
-                                                                                                                                                                                if (a < 0 || a >= tamanho || d < 0 || d >= tamanho) {
-                                                                                                                                                                                            printf("Indice invalido.\n");
-                                                                                                                                                                                                        continue;
-                                                                                                                                                                                                                }
+        a -= 1;
+        d -= 1;
 
-                                                                                                                                                                                                                        if (a == d) {
-                                                                                                                                                                                                                                    printf("Nao pode atacar o mesmo territorio.\n");
-                                                                                                                                                                                                                                                continue;
-                                                                                                                                                                                                                                                        }
+        if (a < 0 || a >= tamanho || d < 0 || d >= tamanho) {
+            printf("Indice invalido.\n");
+            continue;
+        }
 
-                                                                                                                                                                                                                                                                atacar(&t[a], &t[d]);
-                                                                                                                                                                                                                                                                    }
+        if (a == d) {
+            printf("Nao pode atacar o mesmo territorio.\n");
+            continue;
+        }
 
-                                                                                                                                                                                                                                                                        free(t);
-                                                                                                                                                                                                                                                                            printf("\nMemoria liberada. Programa encerrado.\n");
-                                                                                                                                                                                                                                                                                return 0;
-                                                                                                                                                                                                                                                                                }
+        atacar(&t[a], &t[d]);
 
-                                                                                                                                                                                                                                                                                void cadastrar(struct Territorio *t) {
-                                                                                                                                                                                                                                                                                    int i;
-                                                                                                                                                                                                                                                                                        for (i = 0; i < 5; i++) {
-                                                                                                                                                                                                                                                                                                printf("\n--- Cadastrando Territorio %d ---\n", i + 1);
+        // Verificar se alguém perdeu todos os territórios
+        int terrA = contarTerritorios(t, t[a].cor);
+        int terrD = contarTerritorios(t, t[d].cor);
 
-                                                                                                                                                                                                                                                                                                        printf("Nome: ");
-                                                                                                                                                                                                                                                                                                                scanf("%s", t[i].nome);
+        if (terrD == 0) {
+            printf("\n==============================\n");
+            printf("O EXERCITO %s PERDEU TODOS OS TERRITORIOS!\n", t[d].cor);
+            printf("VITORIA DO EXERCITO %s!\n", t[a].cor);
+            printf("==============================\n");
+            break;
+        }
 
-                                                                                                                                                                                                                                                                                                                        printf("Cor: ");
-                                                                                                                                                                                                                                                                                                                                scanf("%s", t[i].cor);
+        if (terrA == 0) {
+            printf("\n==============================\n");
+            printf("O EXERCITO %s PERDEU TODOS OS TERRITORIOS!\n", t[a].cor);
+            printf("VITORIA DO EXERCITO %s!\n", t[d].cor);
+            printf("==============================\n");
+            break;
+        }
 
-                                                                                                                                                                                                                                                                                                                                        printf("Tropas: ");
-                                                                                                                                                                                                                                                                                                                                                scanf("%d", &t[i].tropas);
-                                                                                                                                                                                                                                                                                                                                                    }
-                                                                                                                                                                                                                                                                                                                                                    }
+        pausar();
+    }
 
-                                                                                                                                                                                                                                                                                                                                                    void exibirMapa(struct Territorio *t) {
-                                                                                                                                                                                                                                                                                                                                                        int i;
-                                                                                                                                                                                                                                                                                                                                                            for (i = 0; i < 5; i++) {
-                                                                                                                                                                                                                                                                                                                                                                    printf("[%d] %s (Exercito %s, Tropas: %d)\n",
-                                                                                                                                                                                                                                                                                                                                                                                    i + 1, t[i].nome, t[i].cor, t[i].tropas);
-                                                                                                                                                                                                                                                                                                                                                                                        }
-                                                                                                                                                                                                                                                                                                                                                                                        }
+    free(t);
+    printf("\nMemoria liberada. Programa encerrado.\n");
+    return 0;
+}
 
-                                                                                                                                                                                                                                                                                                                                                                                        void atacar(struct Territorio *atac, struct Territorio *def) {
+void cadastrar(struct Territorio *t) {
+    int i;
+    for (i = 0; i < 5; i++) {
+        printf("\n--- Cadastrando Territorio %d ---\n", i + 1);
 
-                                                                                                                                                                                                                                                                                                                                                                                            printf("\n====== RESULTADO DA BATALHA ======\n");
+        printf("Nome: ");
+        scanf("%s", t[i].nome);
 
-                                                                                                                                                                                                                                                                                                                                                                                                int dadoA = (rand() % 6) + 1;
-                                                                                                                                                                                                                                                                                                                                                                                                    int dadoD = (rand() % 6) + 1;
+        printf("Cor: ");
+        scanf("%s", t[i].cor);
 
-                                                                                                                                                                                                                                                                                                                                                                                                        printf("O Atacante %s rolou o dado e tirou: %d\n", atac->nome, dadoA);
-                                                                                                                                                                                                                                                                                                                                                                                                            printf("O Defensor %s rolou o dado e tirou: %d\n", def->nome, dadoD);
+        printf("Tropas: ");
+        scanf("%d", &t[i].tropas);
+    }
+}
 
-                                                                                                                                                                                                                                                                                                                                                                                                                int poderA = atac->tropas + dadoA;
-                                                                                                                                                                                                                                                                                                                                                                                                                    int poderD = def->tropas + dadoD;
+void exibirMapa(struct Territorio *t) {
+    int i;
+    for (i = 0; i < 5; i++) {
+        printf("[%d] %s (Exercito %s, Tropas: %d)\n",
+                i + 1, t[i].nome, t[i].cor, t[i].tropas);
+    }
+}
 
-                                                                                                                                                                                                                                                                                                                                                                                                                        if (poderA > poderD) {
-                                                                                                                                                                                                                                                                                                                                                                                                                                printf("\nVitória do Atacante!\n");
-                                                                                                                                                                                                                                                                                                                                                                                                                                        printf("%s perdeu 1 tropa.\n", def->nome);
+void atacar(struct Territorio *atac, struct Territorio *def) {
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                def->tropas -= 1;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        if (def->tropas < 0) def->tropas = 0;
+    printf("\n====== RESULTADO DA BATALHA ======\n");
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                if (def->tropas == 0) {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                            printf("%s conquistou o território %s!\n", atac->cor, def->nome);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        strcpy(def->cor, atac->cor);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    def->tropas = 1;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                atac->tropas -= 1;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
+    int dadoA = (rand() % 6) + 1;
+    int dadoD = (rand() % 6) + 1;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            } else if (poderA < poderD) {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    printf("\nO Defensor resistiu ao ataque!\n");
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            printf("%s perdeu 1 tropa.\n", atac->nome);
+    printf("O Atacante %s rolou o dado e tirou: %d\n", atac->nome, dadoA);
+    printf("O Defensor %s rolou o dado e tirou: %d\n", def->nome, dadoD);
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    atac->tropas -= 1;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            if (atac->tropas < 1) atac->tropas = 1;
+    int poderA = atac->tropas + dadoA;
+    int poderD = def->tropas + dadoD;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                } else {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        printf("\nEmpate!\n");
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                printf("Ambos os territórios perderam 1 tropa.\n");
+    if (poderA > poderD) {
+        printf("\nVitória do Atacante!\n");
+        printf("%s perdeu 1 tropa.\n", def->nome);
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        atac->tropas -= 1;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                def->tropas -= 1;
+        def->tropas -= 1;
+        if (def->tropas < 0) def->tropas = 0;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        if (atac->tropas < 1) atac->tropas = 1;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                if (def->tropas < 1) def->tropas = 1;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+        if (def->tropas == 0) {
+            printf("%s conquistou o território %s!\n", atac->cor, def->nome);
+            strcpy(def->cor, atac->cor);
+            def->tropas = 1;
+            atac->tropas -= 1;
+        }
+
+    } else if (poderA < poderD) {
+        printf("\nO Defensor resistiu ao ataque!\n");
+        printf("%s perdeu 1 tropa.\n", atac->nome);
+
+        atac->tropas -= 1;
+        if (atac->tropas < 1) atac->tropas = 1;
+
+    } else {
+        printf("\nEmpate!\n");
+        printf("Ambos os territórios perderam 1 tropa.\n");
+
+        atac->tropas -= 1;
+        def->tropas -= 1;
+
+        if (atac->tropas < 1) atac->tropas = 1;
+        if (def->tropas < 1) def->tropas = 1;
+    }
+}
+
+void pausar() {
+    printf("\nPressione ENTER para continuar para o próximo turno...");
+    getchar();
+    getchar();
+}
+
+int contarTerritorios(struct Territorio *t, const char *cor) {
+    int count = 0;
+    for (int i = 0; i < 5; i++) {
+        if (strcmp(t[i].cor, cor) == 0) {
+            count++;
+        }
+    }
+    return count;
+}
