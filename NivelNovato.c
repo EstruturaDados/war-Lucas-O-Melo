@@ -1,11 +1,9 @@
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
-#include <time.h>
 
 struct Territorio{ char nome[30]; char cor[10]; int tropas; };
 
-//Criando o vetor de Territorio e usando o for pata preencher os dados
+// Criando o vetor de Territorio e usando o for pata preencher os dados
 int main() {
     struct Territorio t[5];
     int i;
